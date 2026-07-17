@@ -1,0 +1,1 @@
+sed -i 's/const isRetake = searchParams.get('\''retake'\'') === '\''true'\'';/const isRetake = searchParams.get('\''retake'\'') === '\''true'\'';\n  console.log("Render Onboarding. isRetake:", isRetake, "location.search:", location.search);/g' src/pages/Onboarding.tsx

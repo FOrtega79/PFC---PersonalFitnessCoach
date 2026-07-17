@@ -1,0 +1,2 @@
+sed -i 's/const unsub = onAuthStateChanged(auth, async (currUser) => {/const unsub = onAuthStateChanged(auth, async (currUser) => {\n      console.log("onAuthStateChanged triggered. currUser:", !!currUser, "isRetake:", isRetake);/g' src/pages/Onboarding.tsx
+sed -i 's/navigate('\''\/home'\'', { replace: true });/console.log("Navigating to home from Onboarding. isRetake:", isRetake); navigate('\''\/home'\'', { replace: true });/g' src/pages/Onboarding.tsx
