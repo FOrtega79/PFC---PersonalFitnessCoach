@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import Splash from './pages/Splash';
 import Onboarding from './pages/Onboarding';
@@ -56,7 +56,7 @@ export default function App() {
 
   return (
     <PaywallProvider>
-      <BrowserRouter>
+      <HashRouter>
       <div className="h-[100dvh] w-full bg-[#0F172A] text-white flex flex-col relative overflow-hidden font-sans">
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-indigo-900/40 rounded-full blur-[140px]"></div>
@@ -69,7 +69,7 @@ export default function App() {
           </ErrorBoundary>
         </div>
       </div>
-    </BrowserRouter>
+    </HashRouter>
     </PaywallProvider>
   );
 }
