@@ -14,6 +14,7 @@ export function useWorkoutReminder() {
       setPermission(Notification.permission);
       
       if (Notification.permission === 'default') {
+        // Request permission after a short delay so it's not too aggressive on first load
         setTimeout(() => {
           Notification.requestPermission().then(setPermission);
         }, 5000);
@@ -54,61 +55,27 @@ export function useWorkoutReminder() {
         // If we already showed it today, skip
         if (localStorage.getItem(reminderKey)) return;
 
-        // Check workout
         const workoutRef = doc(db, 'users', user.uid, 'completed_workouts', todayStr);
         const workoutSnap = await getDoc(workoutRef);
-        const workoutCompleted = workoutSnap.exists() && workoutSnap.data().completed;
 
-        // Check nutrition
-        const nutritionRef = doc(db, 'users', user.uid, 'completed_nutrition', todayStr);
-        const nutritionSnap = await getDoc(nutritionRef);
-        
-        let allMealsCompleted = false;
-        if (nutritionSnap.exists()) {
-           const data = nutritionSnap.data();
-           const bk = data.breakfast?.completed || data.breakfast === true;
-           const lu = data.lunch?.completed || data.lunch === true;
-           const dn = data.dinner?.completed || data.dinner === true;
-           allMealsCompleted = bk && lu && dn;
-        }
-
-        if (!workoutCompleted || !allMealsCompleted) {
-          const title = 'Time to crush it!';
-          let body = "Don't forget to complete your daily meal plan and workout!";
-          
-          if (!workoutCompleted && allMealsCompleted) {
-             body = "Your meals are on point! Now it's time to log your workout.";
-          } else if (workoutCompleted && !allMealsCompleted) {
-             body = "Great job on the workout! Don't forget to log your meals.";
-          }
-
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then((registration) => {
-              registration.showNotification(title, {
-                body,
-                icon: '/pwa-192x192.png',
-                badge: '/pwa-192x192.png',
-                data: window.location.href,
-                
-              });
-            });
-          } else {
-            new Notification(title, { body, icon: '/pwa-192x192.png' });
-          }
+        if (!workoutSnap.exists() || !workoutSnap.data().completed) {
+          // Show notification
+          new Notification('Time to crush it!', {
+            body: "You haven't logged your workout today. Let's get moving!",
+            icon: '/pwa-192x192.png',
+            badge: '/pwa-192x192.png'
+          });
           
           localStorage.setItem(reminderKey, 'true');
-        } else {
-          // Both completed, no need to remind, but we can set the flag so we don't check again today
-          localStorage.setItem(reminderKey, 'true');
         }
-
       } catch (error) {
-        console.error('Error checking status for reminder:', error);
+        console.error('Error checking workout status for reminder:', error);
       }
     };
 
     let unsubscribe: () => void;
     
+    // Check every minute
     const interval = setInterval(() => {
       if (auth.currentUser) {
         checkAndNotify(auth.currentUser);
@@ -117,6 +84,7 @@ export function useWorkoutReminder() {
 
     unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Also check immediately when auth state changes (e.g. app load)
         checkAndNotify(user);
       }
     });

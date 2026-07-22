@@ -6,12 +6,10 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface PaywallProps {
   onClose: () => void;
-  onSubscribe: (tier: 'monthly' | 'yearly') => void;
-  onRestore: () => void;
-  isPurchasing?: boolean;
+  onSubscribe: () => void;
 }
 
-export default function Paywall({ onClose, onSubscribe, onRestore, isPurchasing }: PaywallProps) {
+export default function Paywall({ onClose, onSubscribe }: PaywallProps) {
   const [showClose, setShowClose] = useState(false);
   const [selectedTier, setSelectedTier] = useState<'monthly' | 'yearly'>('yearly');
 
@@ -89,12 +87,11 @@ export default function Paywall({ onClose, onSubscribe, onRestore, isPurchasing 
           </div>
           
           <button 
-            onClick={() => onSubscribe(selectedTier)}
-            disabled={isPurchasing}
+            onClick={onSubscribe}
             className="w-full max-w-sm bg-white text-black font-bold py-4 rounded-2xl text-lg hover:bg-gray-100 transition-colors shadow-xl shadow-white/10 mb-6 flex items-center justify-center gap-2"
           >
             <Apple className="w-5 h-5" />
-            {isPurchasing ? 'Processing...' : 'Subscribe with Apple'}
+            Subscribe with Apple
           </button>
           
           <div className="flex gap-4 text-[10px] text-white/40 font-mono mb-4">
@@ -102,7 +99,7 @@ export default function Paywall({ onClose, onSubscribe, onRestore, isPurchasing 
             <span>&bull;</span>
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <span>&bull;</span>
-            <button onClick={onRestore} className="hover:text-white transition-colors">Restore Purchases</button>
+            <button onClick={() => {}} className="hover:text-white transition-colors">Restore Purchases</button>
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import { auth, db } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import { format } from 'date-fns';
-import { motion } from 'motion/react';
 import CountdownTimer from '../components/CountdownTimer';
 import VideoModal from '../components/VideoModal';
 import WorkoutMode from '../components/WorkoutMode';
@@ -612,10 +611,8 @@ export default function Exercises() {
 
       {!isTomorrow && (
         <div className="mt-10">
-          <motion.button 
+          <button 
             onClick={toggleWorkout}
-            animate={!workoutComplete ? { scale: [1, 1.02, 1] } : {}}
-            transition={!workoutComplete ? { repeat: Infinity, duration: 2, ease: "easeInOut" } : {}}
             className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-mono text-xs tracking-widest uppercase transition-all ${
               workoutComplete 
                 ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
@@ -630,7 +627,7 @@ export default function Exercises() {
             ) : (
               'Mark Entire Workout Complete'
             )}
-          </motion.button>
+          </button>
         </div>
       )}
 

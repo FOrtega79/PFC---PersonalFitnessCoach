@@ -1,2 +1,0 @@
-sed -i 's/if (import.meta.env.VITE_REVENUECAT_PUBLIC_KEY) {/const rcKey = import.meta.env.VITE_REVENUECAT_PUBLIC_KEY;\n        if (rcKey \&\& rcKey.trim().length > 0) {\n          try {/g' src/components/PaywallProvider.tsx
-sed -i 's/Purchases.getSharedInstance().changeUser(user.uid);\n          }/Purchases.getSharedInstance().changeUser(user.uid);\n          }\n          } catch (e) {\n            console.error("RevenueCat init failed:", e);\n          }/g' src/components/PaywallProvider.tsx

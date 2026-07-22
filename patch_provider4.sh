@@ -1,1 +1,0 @@
-sed -i 's/console.warn("RevenueCat configuration failed (Mock mode active):", e.message || e);/console.log("RevenueCat API key is invalid or missing. Using mock mode.");/g' src/components/PaywallProvider.tsx

@@ -122,8 +122,51 @@ export default function Profile() {
     setNewWeight('');
     setProgressPhoto(null);
     
-    // update current weight in user profile
-    await setDoc(doc(db, 'users', user.uid), { weight: w }, { merge: true });
+    let newBmi = userData.bmi;
+    let newBmr = userData.bmr;
+    let newTdee = userData.tdee;
+    let newTarget = userData.targetDailyCalories;
+
+    if (userData.height && userData.age && userData.gender && userData.activityLevel) {
+      newBmi = parseFloat((w / ((userData.height / 100) * (userData.height / 100))).toFixed(1));
+      
+      let baseBmr = (10 * w) + (6.25 * userData.height) - (5 * userData.age);
+      baseBmr += userData.gender === 'Male' ? 5 : -161;
+      newBmr = Math.round(baseBmr);
+      
+      const multipliers: Record<string, number> = {
+        'Sedentary': 1.2,
+        'Lightly Active': 1.375,
+        'Moderately Active': 1.55,
+        'Very Active': 1.725
+      };
+      newTdee = Math.round(newBmr * (multipliers[userData.activityLevel] || 1.2));
+      
+      const goalAdjustments: Record<string, number> = {
+        'Lose Weight': -500,
+        'Maintain': 0,
+        'Build Muscle': 300
+      };
+      newTarget = newTdee + (goalAdjustments[userData.primaryGoal || 'Maintain'] || 0);
+    }
+
+    // update current weight and calculated metrics in user profile
+    await setDoc(doc(db, 'users', user.uid), { 
+      weight: w,
+      bmi: newBmi,
+      bmr: newBmr,
+      tdee: newTdee,
+      targetDailyCalories: newTarget
+    }, { merge: true });
+
+    setUserData((prev: any) => ({
+      ...prev,
+      weight: w,
+      bmi: newBmi,
+      bmr: newBmr,
+      tdee: newTdee,
+      targetDailyCalories: newTarget
+    }));
   };
 
   const handleProgressPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,6 +320,28 @@ export default function Profile() {
             <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mb-2">Daily Target</p>
             <p className="text-3xl font-light tracking-widest text-fuchsia-300">
               {Math.round(userData.targetDailyCalories || userData.tdee)} <span className="text-sm text-white/40">kcal</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Metabolic Profile */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl flex flex-col items-center justify-center text-center">
+            <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mb-1">BMI</p>
+            <p className="text-2xl font-light tracking-widest text-teal-300">
+              {userData.bmi || '--'}
+            </p>
+          </div>
+          <div className="p-4 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl flex flex-col items-center justify-center text-center">
+            <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mb-1">BMR</p>
+            <p className="text-2xl font-light tracking-widest text-blue-300 flex items-baseline gap-1">
+              {userData.bmr || '--'} <span className="text-[10px] text-white/40">kcal</span>
+            </p>
+          </div>
+          <div className="p-4 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl flex flex-col items-center justify-center text-center">
+            <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mb-1">TDEE</p>
+            <p className="text-2xl font-light tracking-widest text-orange-300 flex items-baseline gap-1">
+              {userData.tdee || '--'} <span className="text-[10px] text-white/40">kcal</span>
             </p>
           </div>
         </div>
