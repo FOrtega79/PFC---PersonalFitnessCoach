@@ -91,11 +91,12 @@ export default function UpdateGoalsModal({ onClose, userData, setUserData }: Upd
           <div className="space-y-6 mt-4">
             <div className="flex justify-between items-end">
               <label className="block text-xs font-mono tracking-widest text-white/60 uppercase">Weight</label>
-              <span className="text-3xl font-light text-white">{weight} <span className="text-sm text-white/40">kg</span></span>
+              <span className="text-3xl font-light text-white">{Number(weight).toFixed(1)} <span className="text-sm text-white/40">kg</span></span>
             </div>
             <input 
               type="range" 
               min="40" max="150" 
+              step="0.1"
               value={weight} 
               onChange={e => setWeight(e.target.value)} 
               className="w-full accent-indigo-500 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer" 

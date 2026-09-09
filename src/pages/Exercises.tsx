@@ -5,6 +5,7 @@ import { auth, db } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 import { format } from 'date-fns';
+import toast from 'react-hot-toast';
 import CountdownTimer from '../components/CountdownTimer';
 import VideoModal from '../components/VideoModal';
 import WorkoutMode from '../components/WorkoutMode';
@@ -367,6 +368,10 @@ export default function Exercises() {
     // Auto-complete workout if all exercises are done
     const allDone = exercises.length > 0 && newCompletedExercises.length === exercises.length;
     setWorkoutComplete(allDone);
+    
+    if (allDone && !workoutComplete) {
+      toast.success('Workout Completed!', { icon: '🔥' });
+    }
 
     await setDoc(doc(db, 'users', user.uid, 'completed_workouts', today), {
       date: today,
@@ -381,6 +386,10 @@ export default function Exercises() {
     const newState = !workoutComplete;
     
     setWorkoutComplete(newState);
+    
+    if (newState) {
+      toast.success('Workout Completed!', { icon: '🔥' });
+    }
     
     const newCompletedExercises = newState ? exercises.map(ex => ex.id) : [];
     setCompletedExercises(newCompletedExercises);

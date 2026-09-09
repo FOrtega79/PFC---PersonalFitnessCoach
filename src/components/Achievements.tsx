@@ -131,38 +131,38 @@ export default function Achievements() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-5 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl"></div>
-          <Flame className="w-6 h-6 text-orange-400 mb-2" />
-          <p className="text-3xl font-light tracking-widest text-white">{stats.currentStreak} <span className="text-sm text-white/40">days</span></p>
-          <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mt-1">Current Streak</p>
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-2 gap-6">
+        <div className="p-6 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-orange-500/30 transition-colors">
+          <div className="absolute -top-4 -right-4 w-32 h-32 bg-orange-500/20 rounded-full blur-3xl group-hover:bg-orange-500/30 transition-colors"></div>
+          <Flame className="w-8 h-8 text-orange-400 mb-3 relative z-10" />
+          <p className="text-4xl font-light tracking-widest text-white relative z-10">{stats.currentStreak} <span className="text-base text-white/40">days</span></p>
+          <p className="text-[11px] font-mono tracking-widest text-white/40 uppercase mt-2 relative z-10">Current Streak</p>
         </div>
-        <div className="p-5 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
-          <Target className="w-6 h-6 text-indigo-400 mb-2" />
-          <p className="text-3xl font-light tracking-widest text-white">{stats.thisWeek} <span className="text-sm text-white/40">/ 7</span></p>
-          <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mt-1">This Week</p>
+        <div className="p-6 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-indigo-500/30 transition-colors">
+          <div className="absolute -top-4 -left-4 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl group-hover:bg-indigo-500/30 transition-colors"></div>
+          <Target className="w-8 h-8 text-indigo-400 mb-3 relative z-10" />
+          <p className="text-4xl font-light tracking-widest text-white relative z-10">{stats.thisWeek} <span className="text-base text-white/40">/ 7</span></p>
+          <p className="text-[11px] font-mono tracking-widest text-white/40 uppercase mt-2 relative z-10">This Week</p>
         </div>
       </div>
 
-      <div className="p-6 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl">
-        <h3 className="text-xs font-mono tracking-widest uppercase text-white/60 mb-4">Achievements</h3>
+      <div className="p-8 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl">
+        <h3 className="text-xs font-mono tracking-widest uppercase text-white/60 mb-6">Achievements</h3>
         
         {achievements.length === 0 ? (
-          <p className="text-sm text-white/40 text-center py-4 font-mono">Complete workouts and nutrition to earn badges.</p>
+          <p className="text-sm text-white/40 text-center py-6 font-mono">Complete workouts and nutrition to earn badges.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {achievements.map(ach => (
-              <div key={ach.id} className="p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center text-center gap-2 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="w-10 h-10 rounded-full bg-black/50 border border-white/10 flex items-center justify-center relative z-10 group-hover:scale-110 transition-transform">
+              <div key={ach.id} className="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center text-center gap-3 relative group overflow-hidden shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center relative z-10 group-hover:scale-110 transition-transform shadow-inner">
                   {ach.icon}
                 </div>
                 <div className="relative z-10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/90">{ach.title}</p>
-                  <p className="text-[9px] text-white/50 mt-1">{ach.description}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-white/90">{ach.title}</p>
+                  <p className="text-[10px] text-white/50 mt-1.5 leading-relaxed">{ach.description}</p>
                 </div>
               </div>
             ))}

@@ -283,11 +283,12 @@ export default function Onboarding() {
               <div className="space-y-6 mt-8">
                 <div className="flex justify-between items-end">
                   <label className="block text-xs font-mono tracking-widest text-white/40 uppercase">Weight</label>
-                  <span className="text-3xl font-light">{formData.weight} <span className="text-sm text-white/40">kg</span></span>
+                  <span className="text-3xl font-light">{Number(formData.weight).toFixed(1)} <span className="text-sm text-white/40">kg</span></span>
                 </div>
                 <input 
                   type="range" 
                   min="40" max="150" 
+                  step="0.1"
                   value={formData.weight} 
                   onChange={e => setFormData({...formData, weight: e.target.value})} 
                   className="w-full accent-indigo-500 h-2 bg-white/10 rounded-lg appearance-none cursor-pointer" 

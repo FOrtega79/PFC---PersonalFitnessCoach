@@ -85,7 +85,7 @@ export default function CalendarView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="p-6 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl">
+      <div className="p-8 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-sm font-mono tracking-widest uppercase text-white/90">
             {format(currentDate, 'MMMM yyyy')}
@@ -108,7 +108,7 @@ export default function CalendarView() {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-y-2">
+        <div className="grid grid-cols-7 gap-y-4 gap-x-2 mt-4">
           {days.map(day => {
             const dayStr = format(day, 'yyyy-MM-dd');
             const workout = workoutHistory[dayStr];
@@ -116,7 +116,7 @@ export default function CalendarView() {
             const isCurrentMonth = isSameMonth(day, monthStart);
             const isTodayDate = isToday(day);
 
-            let dayClasses = "h-10 w-10 mx-auto flex items-center justify-center rounded-full text-sm font-light transition-all cursor-pointer ";
+            let dayClasses = "h-10 w-10 md:h-12 md:w-12 mx-auto flex items-center justify-center rounded-full text-sm font-light transition-all cursor-pointer ";
             
             if (!isCurrentMonth) {
               dayClasses += "text-white/20 hover:text-white/40 ";
@@ -133,7 +133,7 @@ export default function CalendarView() {
                 <div onClick={() => onDateClick(day)} className={dayClasses + " relative"}>
                   {format(day, dateFormat)}
                   {workout && (
-                    <div className="absolute bottom-1 w-1 h-1 rounded-full bg-green-400"></div>
+                    <div className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_5px_rgba(74,222,128,0.5)]"></div>
                   )}
                 </div>
               </div>
@@ -142,8 +142,8 @@ export default function CalendarView() {
         </div>
       </div>
 
-      <div className="p-6 bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl">
-        <h3 className="text-xs font-mono tracking-widest uppercase text-white/60 mb-4">
+      <div className="p-8 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl">
+        <h3 className="text-xs font-mono tracking-widest uppercase text-white/60 mb-6">
           Summary for {format(selectedDate, 'MMM do, yyyy')}
         </h3>
         

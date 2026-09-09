@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitCoach</string>
+    <string name="widget_name">FitCoach At-a-Glance</string>
+    <string name="widget_description">Live daily workout, photo check-in, and fitness streak dashboard for Google Pixel.</string>
+</resources>

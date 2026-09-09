@@ -3,11 +3,26 @@ import { Outlet, NavLink, useLocation, useOutlet } from 'react-router-dom';
 import { Home, Dumbbell, User, WifiOff } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
+const TAB_ORDER = {
+  '/home': 0,
+  '/exercises': 1,
+  '/profile': 2
+};
+
 export default function AppLayout() {
   const location = useLocation();
   const currentOutlet = useOutlet();
   
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [prevPath, setPrevPath] = useState(location.pathname);
+  const [direction, setDirection] = useState(1);
+
+  if (location.pathname !== prevPath) {
+    const prevIndex = TAB_ORDER[prevPath as keyof typeof TAB_ORDER] ?? 0;
+    const currIndex = TAB_ORDER[location.pathname as keyof typeof TAB_ORDER] ?? 0;
+    setDirection(currIndex > prevIndex ? 1 : -1);
+    setPrevPath(location.pathname);
+  }
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -23,14 +38,14 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 h-full max-w-md mx-auto w-full relative z-20 overflow-hidden">
+    <div className="flex flex-col flex-1 h-full w-full relative z-20 overflow-hidden">
       <div className="flex-1 overflow-hidden relative">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, x: 10 }}
+            initial={{ opacity: 0, x: 20 * direction }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
+            exit={{ opacity: 0, x: -20 * direction }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="absolute inset-0 overflow-y-auto pb-20 no-scrollbar"
           >
@@ -39,7 +54,7 @@ export default function AppLayout() {
         </AnimatePresence>
       </div>
 
-      <nav className="fixed bottom-0 inset-x-0 max-w-md mx-auto h-20 bg-[#0F172A]/80 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-around px-6 pb-safe">
+      <nav className="absolute bottom-0 inset-x-0 w-full h-20 bg-[#0F172A]/80 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-around px-6 pb-safe">
         <NavItem to="/home" icon={<Home className="w-6 h-6" />} label="Home" />
         <NavItem to="/exercises" icon={<Dumbbell className="w-6 h-6" />} label="Exercises" />
         <NavItem to="/profile" icon={<User className="w-6 h-6" />} label="Profile" />

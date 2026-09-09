@@ -3,8 +3,10 @@ import { auth, db } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { format } from 'date-fns';
+import { sendAppNotification, updateAppBadge } from '../lib/notifications';
 
 const REMINDER_KEY_PREFIX = 'workout_reminder_shown_';
+const PHOTO_REMINDER_KEY_PREFIX = 'photo_reminder_shown_';
 
 export function useWorkoutReminder() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
@@ -17,7 +19,7 @@ export function useWorkoutReminder() {
         // Request permission after a short delay so it's not too aggressive on first load
         setTimeout(() => {
           Notification.requestPermission().then(setPermission);
-        }, 5000);
+        }, 4000);
       }
     }
   }, []);
@@ -33,43 +35,67 @@ export function useWorkoutReminder() {
         if (!userSnap.exists()) return;
         
         const userData = userSnap.data();
-        const reminderEnabled = userData.reminderEnabled ?? true;
-        
-        if (!reminderEnabled) return;
-
-        const reminderTimeStr = userData.reminderTime || '18:00';
-        const [reminderHour, reminderMinute] = reminderTimeStr.split(':').map(Number);
-        
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-
-        // Check if current time is past the reminder time
-        if (currentHour < reminderHour || (currentHour === reminderHour && currentMinute < reminderMinute)) {
-          return; // Too early
-        }
-
         const todayStr = format(now, 'yyyy-MM-dd');
-        const reminderKey = `${REMINDER_KEY_PREFIX}${todayStr}`;
-        
-        // If we already showed it today, skip
-        if (localStorage.getItem(reminderKey)) return;
 
-        const workoutRef = doc(db, 'users', user.uid, 'completed_workouts', todayStr);
-        const workoutSnap = await getDoc(workoutRef);
-
-        if (!workoutSnap.exists() || !workoutSnap.data().completed) {
-          // Show notification
-          new Notification('Time to crush it!', {
-            body: "You haven't logged your workout today. Let's get moving!",
-            icon: '/pwa-192x192.png',
-            badge: '/pwa-192x192.png'
-          });
+        // 1. Check Workout Reminder
+        const reminderEnabled = userData.reminderEnabled ?? true;
+        if (reminderEnabled) {
+          const reminderTimeStr = userData.reminderTime || '18:00';
+          const [reminderHour, reminderMinute] = reminderTimeStr.split(':').map(Number);
           
-          localStorage.setItem(reminderKey, 'true');
+          if (currentHour > reminderHour || (currentHour === reminderHour && currentMinute >= reminderMinute)) {
+            const reminderKey = `${REMINDER_KEY_PREFIX}${todayStr}`;
+            
+            if (!localStorage.getItem(reminderKey)) {
+              const workoutRef = doc(db, 'users', user.uid, 'completed_workouts', todayStr);
+              const workoutSnap = await getDoc(workoutRef);
+
+              if (!workoutSnap.exists() || !workoutSnap.data().completed) {
+                await sendAppNotification('Time to crush it! 💪', {
+                  body: "You haven't logged your workout today. Let's get moving!",
+                  icon: '/pwa-192x192.png',
+                  badge: '/pwa-192x192.png',
+                  tag: 'workout-reminder',
+                });
+                await updateAppBadge(1);
+                localStorage.setItem(reminderKey, 'true');
+              }
+            }
+          }
         }
+
+        // 2. Check Daily Photo Reminder
+        const photoReminderEnabled = userData.photoReminderEnabled ?? true;
+        if (photoReminderEnabled) {
+          const photoReminderTimeStr = userData.photoReminderTime || '09:00';
+          const [photoHour, photoMinute] = photoReminderTimeStr.split(':').map(Number);
+
+          if (currentHour > photoHour || (currentHour === photoHour && currentMinute >= photoMinute)) {
+            const photoReminderKey = `${PHOTO_REMINDER_KEY_PREFIX}${todayStr}`;
+
+            if (!localStorage.getItem(photoReminderKey)) {
+              const logRef = doc(db, 'users', user.uid, 'daily_logs', todayStr);
+              const logSnap = await getDoc(logRef);
+
+              if (!logSnap.exists() || !logSnap.data().photo) {
+                await sendAppNotification('📸 Daily Progress Snap', {
+                  body: "Capture today's progress photo to track your physical transformation!",
+                  icon: '/pwa-192x192.png',
+                  badge: '/pwa-192x192.png',
+                  tag: 'photo-reminder',
+                });
+                await updateAppBadge(1);
+                localStorage.setItem(photoReminderKey, 'true');
+              }
+            }
+          }
+        }
+
       } catch (error) {
-        console.error('Error checking workout status for reminder:', error);
+        console.error('Error checking reminders:', error);
       }
     };
 
