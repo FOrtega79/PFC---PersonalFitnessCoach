@@ -1,2 +1,5 @@
 include ':app'
+def capacitorNodeModulesDir = "${rootDir}/../node_modules/@capacitor/android"
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File(capacitorNodeModulesDir, 'capacitor')
 rootProject.name = "FitCoach"

@@ -1,0 +1,8 @@
+{
+	"appId": "com.fitcoach.app",
+	"appName": "FitCoach",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https"
+	}
+}
