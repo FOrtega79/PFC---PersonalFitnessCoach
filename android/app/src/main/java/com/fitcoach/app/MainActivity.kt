@@ -11,7 +11,7 @@ class MainActivity : BridgeActivity() {
             bridge?.let { b ->
                 val path = uri.path ?: "/"
                 val query = uri.query?.let { "?$it" } ?: ""
-                b.webView.evaluateJavascript("window.location.href = '$path$query';", null)
+                b.webView?.evaluateJavascript("window.location.href = '$path$query';", null)
             }
         }
     }
